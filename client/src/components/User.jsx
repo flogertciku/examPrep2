@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 const User = (props) => {
     const [person, setPerson] = useState({})
     const {id} = useParams(); 
-    const [degree,setDegree2]=useState(false)
+    // const [degree,setDegree2]=useState(false)
     useEffect(() => {
         axios.get("http://localhost:8000/api/people/" + id)
             .then( res => {
@@ -13,11 +13,11 @@ const User = (props) => {
             })
             .catch( err => console.log(err) );
     }, []);
-    const setDegree= ()=>{
+    const handleChange= (vleraNdryshuar)=>{
         console.log(person)
         axios.patch('http://localhost:8000/api/people/' + id, {
-            ...person ,
-            degree:degree // this is shortcut syntax for firstName: firstName,
+            // lastName: lastName ,email:email ,belt:e.target.checked
+            ...person,...vleraNdryshuar// this is shortcut syntax for firstName: firstName,
                   // this is shortcut syntax for lastName: lastName
         })
             .then(res => {
@@ -33,7 +33,9 @@ const User = (props) => {
             <p>Last Name: {person.email}</p>
             <label htmlFor="">Degree</label>
             <p>{JSON.stringify(person.degree)}</p>
-            <input type='checkbox' checked={person.degree} onChange={e=>{setPerson(prev=>({...prev,degree:e.target.checked}));setDegree2(e.target.checked) ;setDegree();console.log(e.target.checked)}}></input>
+            <p>Degree</p><input type='checkbox' checked={person.degree} onChange={e=>{setPerson({...person,degree:e.target.checked}) ;handleChange({degree:e.target.checked})}}></input><br></br>
+           <p>Belt: </p> <input type='checkbox' checked={person.belt} onChange={e=>{ setPerson({...person,belt:e.target.checked});handleChange({belt:e.target.checked})}}></input>
+        
         </div>
     );
 }

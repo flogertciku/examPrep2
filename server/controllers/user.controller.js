@@ -16,7 +16,7 @@ module.exports.createUser = (req, res) => {
 
 }
 module.exports.getAllUsers = (request, response) => {
-    User.find({})
+    User.find({}).sort({name:'asc'})
         .then(persons => {
             // console.log(persons); //console logs are optional, but they are highly recommended for troubleshooting!
             response.json(persons);
