@@ -12,7 +12,7 @@ const UserList = (props) => {
     const [filter,setFilter]=useState("")
     
     useEffect(()=>{
-    	axios.get("http://localhost:8000/api/people")
+    	axios.get("http://localhost:8000/api/people",{withCredentials:true})
     	.then((res)=>{
 	    console.log(res.data);
             setPeople(res.data);
@@ -22,7 +22,7 @@ const UserList = (props) => {
     	})
     }, [updated])
     const handleDelete=(id)=>{
-        axios.delete("http://localhost:8000/api/people/"+id)
+        axios.delete("http://localhost:8000/api/people/"+id,{withCredentials:true})
     	.then((res)=>{
 	    console.log(res.data);
             setUpdated(!updated)

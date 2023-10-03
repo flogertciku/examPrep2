@@ -1,8 +1,60 @@
 const User = require('../models/user.model');    /* this is new */
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
+module.exports.register = (req, res) => {
+    console.log("tesssttttt")
+    console.log(process.env.FIRST_SECRET_KEY)
+    User.create(req.body)
+      .then(user => {
+        const userToken = jwt.sign({
+            id: user._id
+        }, process.env.FIRST_SECRET_KEY);
+ 
+        res
+            .cookie("usertoken", userToken, {
+                httpOnly: true
+            })
+            .json({ msg: "success!", user: user });
 
+      })
+      .catch(err => res.status(300).json(err));
+  }
+  module.exports.login = async(req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+ 
+    if(user === null) {
+        // email not found in users collection
+        return res.status(300).json({errors:{email:{message:"user nuk egziston"}}});
+    }
+ 
+    // if we made it this far, we found a user with this email address
+    // let's compare the supplied password to the hashed password in the database
+    const correctPassword = await bcrypt.compare(req.body.password, user.password);
+ 
+    if(!correctPassword) {
+        // password wasn't a match!
+        return res.status(300).json({errors:{password:{message:"passwordi sbo"}}});
+    }
+ 
+    // if we made it this far, the password was correct
+
+    // userToken : asjdoijuqpw8oru01    epuw9da0wadaksjdoaisndhasio
+    // user._id :    flogert1234567
+    // FIRST_SECRET_KEY:     " first key value2"
+    const userToken = jwt.sign({
+        id: user._id
+    }, process.env.FIRST_SECRET_KEY);
+ 
+    // note that the response object allows chained calls to cookie and json
+    res
+        .cookie("usertoken", userToken, {
+            httpOnly: true
+        })
+        .json({ msg: "success!" });
+}
 module.exports.createUser = (req, res) => {
-    console.log(req.body.role)
+    // console.log(req.body.role)
     User.exists({role: "teacher"})
     .then(userExists => {
         if (userExists && req.body.role=="teacher") {
@@ -57,8 +109,8 @@ module.exports.getPerson = (request, response) => {
 }
 
 module.exports.updatePerson = (request, response) => {
-    console.log("ca marr nga frontendi")
-    console.log(request.body)
+    // console.log("ca marr nga frontendi")
+    // console.log(request.body)
     User.findOneAndUpdate({_id: request.params.id}, request.body, {new:true})
         .then(updatedPerson => response.json(updatedPerson))
         .catch(err => response.json(err))
