@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-const Register = () => {
+import LogIn from './LogIn';
+const Register = ({setStateLoged}) => {
     const navigate= useNavigate()
     //keep track of what is being typed via useState hook
     const [name, setName] = useState(""); 
@@ -28,19 +29,22 @@ const Register = () => {
                 belt,
                 degree,
                 confirmPassword
-        })
+        },{withCredentials:true})
             .then(res=>{
                 console.log(res); // always console log to get used to tracking your data!
                 console.log(res.data);
 
 setVal({})
+localStorage.setItem('isLogedIn', true);
+setStateLoged(true)
 navigate("/users")
             })
             .catch(err=>{ console.log(err);err.response.data.errors? setVal(err.response.data.errors): console.log(err)})
     }
     
     return (
-        <form onSubmit={onSubmitHandler}>
+        <>
+        <form onSubmit={onSubmitHandler} >
             <p> 
                 { val.name? <p>{val.name.message}</p> : "" }
                 <label>Name</label><br/>
@@ -89,6 +93,10 @@ navigate("/users")
             </p>
             <input type="submit"/>
         </form>
+            <LogIn setStateLoged={setStateLoged} ></LogIn>
+
+
+        </>
     )
 }
 export default Register;

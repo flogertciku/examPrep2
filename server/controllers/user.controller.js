@@ -1,5 +1,6 @@
 const User = require('../models/user.model');    /* this is new */
 const jwt = require("jsonwebtoken");
+const bcrypt= require("bcrypt")
 require('dotenv').config();
 
 module.exports.register = (req, res) => {
@@ -20,6 +21,11 @@ module.exports.register = (req, res) => {
       })
       .catch(err => res.status(300).json(err));
   }
+
+  module.exports.logout= (req, res) => {
+    res.clearCookie('usertoken');
+    res.sendStatus(200);
+}
   module.exports.login = async(req, res) => {
     const user = await User.findOne({ email: req.body.email });
  
